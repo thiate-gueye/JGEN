@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="fragment::head"></div>
+    <link rel="stylesheet" th:href="@{/assets/css/forProjects.css}">
+</head>
+<body>
+    <div th:replace="fragment::menu"></div>
+    <div class="container mt-5">
+        <div class="accordion" id="accordionExample">
+            <!-- First Collapse -->
+            <div class="card" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <div class="card-header d-flex align-items-center" id="headingOne" style="cursor: pointer">
+                    <div>
+                        <p class="mb-0 text-secondary">Taux d'efficacité</p>
+                        <h6 class="my-1 text-danger" th:text="${taux_efficacite}+'%'"></h6>
+                    </div>
+                    <button class="btn widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto" type="button">
+                        <i class="fas fa-thumbtack"></i>
+                    </button>
+                </div>
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <table class="table table-bordered w-100">
+                            <thead>
+                            <tr class="text-primary">
+                                <th>Indicateur</th>
+                                <th class="text-center">Reference</th>
+                                <th class="text-center">Cible</th>
+                                <th class="text-center">Atteint</th>
+                                <th class="text-center">Taux atteint</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="indicateur:${indicateurs}">
+                                    <td class="col-6" th:text="${indicateur.getIndicateur()}"></td>
+                                    <td class="text-center" th:text="${indicateur.getReference()}"></td>
+                                    <td class="text-center" th:text="${indicateur.getCible()}"></td>
+                                    <td class="text-center" th:text="${indicateur.getAtteinte()}"></td>
+                                    <td th:class="'text-center '+${indicateur.getColor()}" th:text="${indicateur.getTaux()}+'%'"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Collapse -->
+            <div class="card" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <div class="card-header d-flex align-items-center" id="headingTwo"  style="cursor: pointer">
+                    <div>
+                        <p class="mb-0 text-secondary">Taux d'execution physique</p>
+                        <h6 class="my-1 text-info" th:text="${taux_exe_phy}+'%'"></h6>
+                    </div>
+                    <button class="btn widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto" type="button">
+                        <i class="fas fa-check"></i>
+                    </button>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <table class="table table-bordered w-100">
+                            <thead>
+                            <tr class="text-info">
+                                <th>Activité</th>
+                                <th class="text-center">Cible</th>
+                                <th class="text-center">Taux réalisation</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="activite:${activites}">
+                                    <td class="col-6" th:text="${activite.getActivite()}"></td>
+                                    <td class="text-center" th:text="${activite.getCible()}"></td>
+                                    <td th:class="'text-center '+${activite.getColorRealisation()}" th:text="${activite.getAtteinte()}+'%'"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Third Collapse -->
+            <div class="card" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                <div class="card-header d-flex align-items-center" id="headingThree" style="cursor: pointer">
+                    <div>
+                        <p class="mb-0 text-secondary">Taux d'execution budgetaire</p>
+                        <h6 class="my-1 text-warning" th:text="${taux_exe_budg}+'%'"></h6>
+                    </div>
+                    <button class="btn widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto" type="button">
+                        <i class="fas fa-coins"></i>
+                    </button>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <table class="table table-bordered w-100">
+                            <thead>
+                            <tr class="text-warning">
+                                <th>Activité</th>
+                                <th class="text-center">Budget</th>
+                                <th class="text-center">Décaissement</th>
+                                <th class="text-center">Taux décaissement</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="activite:${activites}">
+                                    <td class="col-6" th:text="${activite.getActivite()}"></td>
+                                    <td class="text-center" th:text="${activite.formatNumber(activite.getBudget())}+' TTC'"></td>
+                                    <td class="text-center" th:text="${activite.formatNumber(activite.getDecaissement())}+' TTC'"></td>
+                                    <td th:class="'text-center '+${activite.getColorDecaissement()}" th:text="${activite.getDecPurcent()+'%'}"></td>
+                                </tr>
+
+                                <tr th:each="formation:${formations}">
+                                    <td class="col-6" th:text="${formation.thematique}"></td>
+                                    <td class="text-center" th:text="${formation.formatNumber(formation.budget)}+' TTC'"></td>
+                                    <td class="text-center" th:text="${formation.formatNumber(formation.decaissement)}+' TTC'"></td>
+                                    <td th:class="'text-center '+${formation.getColorDecaissement()}" th:text="${formation.getDecPurcent()+'%'}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragment::footer"></div>
+</body>
+</html>

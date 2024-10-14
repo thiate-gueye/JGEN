@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragment::head"></div>
+</head>
+
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="fragment::menu"></div>
+    <!-- Content Wrapper -->
+    <div class="d-flex flex-column" id="content-wrapper">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Begin Page Content -->
+            <div class="container">
+                <div class="card card-page shadow mb-4 table-responsive">
+                    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h3 class="m-0 font-weight-bold text-primary">Suivi des activités</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-header py-2 d-sm-flex align-items-center justify-content-end">
+                            <a class="btn btn-outline-success" th:href="@{/export/excel/activites/suivi}">Telecharger <span class="fas fa-download"></span></a>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered w-100">
+                                <thead>
+                                <tr class="text-primary">
+                                    <th rowspan="2">Objectif spécifique</th>
+                                    <th rowspan="2">Activité</th>
+                                    <th rowspan="2">Cible</th>
+                                    <th rowspan="2">Taux réalisation</th>
+                                    <th colspan="2" class="text-center">Résultat</th>
+                                    <th rowspan="2">Budget</th>
+                                    <th rowspan="2">Décaissement</th>
+                                    <th rowspan="2" class="text-truncate" style="max-width: 150px;">Taux décaissement</th>
+                                    <th rowspan="2">Résponsable</th>
+                                    <th rowspan="2">Lieu</th>
+                                    <th colspan="2" class="text-center">Date début</th>
+                                    <th colspan="2" class="text-center">Date fin</th>
+                                    <th rowspan="2">Statut</th>
+                                    <th rowspan="2">Commentaire</th>
+                                    <th rowspan="2"></th>
+                                </tr>
+                                <tr class="text-primary">
+                                    <th>Attendu</th>
+                                    <th>Obtenu</th>
+                                    <th>Prévue</th>
+                                    <th>Réelle</th>
+                                    <th>Prévue</th>
+                                    <th>Réelle</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="suivi:${listSuivi}">
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.planification.objectifSpecifique.libelle}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.planification.activite}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.planification.cible}"></td>
+                                    <td th:attr="class='text-truncate '+${suivi.getColorRealisation()}"  style="max-width: 150px;" th:text="${suivi.atteinte+'%'}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.planification.resultatAttendu}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.resultatObtenu}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.planification.formatBudget()+' TTC'}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.formatDecaissement()+' TTC'}"></td>
+                                    <td th:attr="class=${suivi.getColorDecaissement()}" th:text="${suivi.getDecPurcent()+'%'}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.planification.responsable}"></td>
+                                    <td th:text="${suivi.planification.lieu}"></td>
+                                    <td th:text="${suivi.planification.dateDebut}"></td>
+                                    <td th:text="${suivi.dateDebut}"></td>
+                                    <td th:text="${suivi.planification.dateFin}"></td>
+                                    <td th:text="${suivi.dateFin}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.statut}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${suivi.commentaire}"></td>
+                                    <td class="d-flex align-content-lg-end">
+                                        <div class="mx-2" style="cursor: pointer" data-bs-toggle="modal" th:attr="data-bs-target='#information'+${suivi.id}">
+                                            <i class="fa btn-circle pointer text-primary fa-eye fa-lg" title="Information"></i>
+                                        </div>
+                                        <div class="mx-2" style="cursor: pointer" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || suivi.auth == true}" data-bs-toggle="modal" th:attr="data-bs-target='#modification'+${suivi.id}">
+                                            <i class="fa fa-regular pointer btn-circle fa-lg text-warning fa-pen-alt" title="Modification"></i>
+                                        </div>
+
+                                        <!-- Modal Information-->
+                                        <div class="modal fade" th:id="'information'+${suivi.id}" data-bs-keyboard="false" tabindex="-1" aria-labelledby="informationLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="informationLabel">Suivi de l'activité</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table class="table table-bordered w-100">
+                                                            <tr>
+                                                                <td class="fw-bold">Objectif spécifique</td>
+                                                                <td th:text="${suivi.planification.objectifSpecifique.libelle}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Activité</td>
+                                                                <td th:text="${suivi.planification.activite}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Cible</td>
+                                                                <td th:text="${suivi.planification.cible}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Résultat attendu</td>
+                                                                <td th:text="${suivi.planification.resultatAttendu}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Taux réalisation</td>
+                                                                <td th:text="${suivi.atteinte}+'%'"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Résultat obtenu</td>
+                                                                <td th:text="${suivi.resultatObtenu}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Budget</td>
+                                                                <td th:text="${suivi.planification.formatBudget()+' TTC'}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Décaissement</td>
+                                                                <td th:text="${suivi.formatDecaissement()+' TTC'}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Taux décaissement</td>
+                                                                <td th:text="${suivi.getDecPurcent()+'%'}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Résponsable</td>
+                                                                <td th:text="${suivi.planification.responsable}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">lieu</td>
+                                                                <td th:text="${suivi.planification.lieu}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Date de début prévue</td>
+                                                                <td th:text="${suivi.planification.dateDebut}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Date de début réelle</td>
+                                                                <td th:text="${suivi.dateDebut}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Date de fin prévue</td>
+                                                                <td th:text="${suivi.planification.dateFin}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Date de fin réelle</td>
+                                                                <td th:text="${suivi.dateFin}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Statut</td>
+                                                                <td th:text="${suivi.statut}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Commentaire</td>
+                                                                <td th:text="${suivi.commentaire}"></td>
+                                                            </tr>
+                                                        </table>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Modification-->
+                                        <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || suivi.auth == true}" th:id="'modification'+${suivi.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modificationLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="modificationLabel">Suivi de l'activité</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form th:action="@{/activites/suivi/modification}" method="post">
+                                                            <input name="code" th:value="${suivi.id}" hidden readonly>
+                                                            <input name="planif" th:value="${suivi.planification.id}" hidden readonly>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" th:value="${suivi.planification.objectifSpecifique.libelle}" readonly>
+                                                                <label>Objectif spécifique</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" th:value="${suivi.planification.activite}" readonly>
+                                                                <label>Activité</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" th:value="${suivi.planification.responsable}" readonly>
+                                                                <label>Résponsable</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" th:value="${suivi.planification.resultatAttendu}" readonly>
+                                                                <label>Résultat attendu</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control" required name="resultatObtenu" placeholder="Resultat obtenu" th:value="${suivi.resultatObtenu}">
+                                                                <label>Résultat obtenu</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <select name="atteinte" class="form-select">
+                                                                    <option th:value="${suivi.atteinte}" th:text="${suivi.atteinte}"></option>
+                                                                    <option value="0.0">0.0%</option>
+                                                                    <option value="10.0">10%</option>
+                                                                    <option value="20.0">20%</option>
+                                                                    <option value="30.0">30%</option>
+                                                                    <option value="40.0">40%</option>
+                                                                    <option value="50.0">50%</option>
+                                                                    <option value="60.0">60%</option>
+                                                                    <option value="70.0">70%</option>
+                                                                    <option value="80.0">80%</option>
+                                                                    <option value="90.0">90%</option>
+                                                                    <option value="100.0">100%</option>
+                                                                </select>
+                                                                <label>Taux de réalisation</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="date" class="form-control" required name="dateDebut" placeholder="Date début" th:value="${suivi.dateDebut}">
+                                                                <label>Date début</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="date" class="form-control" name="dateFin" placeholder="Date fin" th:value="${suivi.dateFin}">
+                                                                <label>Date fin</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control" required name="decaissement" placeholder="Décaissement" th:value="${suivi.decaissement}">
+                                                                <label>Décaissement</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <select name="statut" class="form-select">
+                                                                    <option th:value="${suivi.statut}" th:text="${suivi.statut}"></option>
+                                                                    <option value="Non démarrée">Non démarrée</option>
+                                                                    <option value="En cours">En cours</option>
+                                                                    <option value="Términée">Términée</option>
+                                                                    <option value="Annulée">Annulée</option>
+                                                                </select>
+                                                                <label>Statut</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" name="commentaire" placeholder="Commentaire" th:value="${suivi.commentaire}">
+                                                                <label>Commentaire</label>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                <button type="submit" class="btn btn-primary">Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End of Main Content -->
+            <div th:replace="fragment::footer"></div>
+        </div>
+    </div>
+</div>
+</div>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $('#plan').on('change', function () {
+            let responsable = $('#recherche').val();
+            $('#form2').append("<input hidden name ='responsable' value='" + responsable + "' />");
+            this.form.submit();
+        });
+
+        $('#bf1').click(function () {
+            let date = $('#plan').val();
+            $('#form1').append("<input hidden name ='date' value='" + date + "' />")
+        });
+
+        $('#export').click(function () {
+            let date = $('#plan').val();
+            let responsable = $('#recherche').val();
+            $('#form0').append("<input hidden name ='date' value='" + date + "' /><br/>" +
+                "<input hidden name ='theme' value='" + responsable + "' />")
+        });
+    });
+</script>
+</body>
+</html>
+

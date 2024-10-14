@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragment::head"></div>
+</head>
+
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="fragment::menu"></div>
+    <!-- Content Wrapper -->
+    <div class="d-flex flex-column" id="content-wrapper">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Begin Page Content -->
+            <div class="container">
+                <div class="card card-page shadow mb-4 table-responsive">
+                    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h3 class="m-0 font-weight-bold text-primary">Planification des indicateurs</h3>
+                        <div class="cardHeader">
+                            <a class="btn btn-primary show-modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Nouveau <span class="fas fa-plus"></span></a>
+                        </div>
+
+                        <!-- Modal d'ajout -->
+                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Planification de l'indicateur</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form th:action="@{/indicateurs/planification/ajout}" method="post" th:object="${new_indicateur}">
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="libelle" required placeholder="Libellé de l'action" th:field="*{indicateur}">
+                                                <label for="libelle">Indicateur</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" required placeholder="Déscription de l'indicateur" th:field="*{description}">
+                                                <label>Déscription</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" id="reference" required placeholder="La référence" th:field="*{reference}">
+                                                <label for="reference">Référence</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" id="cible" required placeholder="La cible" th:field="*{cible}">
+                                                <label for="cible">Cible</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="source" required placeholder="Source de verification" th:field="*{sourceVerification}">
+                                                <label for="source">Source verification</label>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-header py-2 d-sm-flex align-items-center justify-content-end">
+                            <a class="btn btn-outline-success" th:href="@{/export/excel/indicateurs/planification}">Telecharger <span class="fas fa-download"></span></a>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered w-100">
+                                <thead>
+                                <tr class="text-primary">
+                                    <td>Indicateur</td>
+                                    <td>Déscription</td>
+                                    <td>Reference</td>
+                                    <td>Cible</td>
+                                    <td>Source verification</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="indicateur:${listIndicateurs}">
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${indicateur.indicateur}"></td>
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${indicateur.description}"></td>
+                                    <td th:text="${indicateur.reference}"></td>
+                                    <td th:text="${indicateur.cible}"></td>
+                                    <td th:text="${indicateur.sourceVerification}"></td>
+                                    <td class="d-flex align-content-lg-end">
+                                        <div class="mx-2" style="cursor: pointer" data-bs-toggle="modal" th:attr="data-bs-target='#information'+${indicateur.id}">
+                                            <i class="fa btn-circle pointer text-primary fa-eye fa-lg" title="Information"></i>
+                                        </div>
+                                        <div class="mx-2" style="cursor: pointer" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || indicateur.auth == true}" data-bs-toggle="modal" th:attr="data-bs-target='#modification'+${indicateur.id}">
+                                            <i class="fa fa-regular pointer btn-circle fa-lg text-warning fa-pen-alt" title="Modification"></i>
+                                        </div>
+                                        <div class="mx-2" style="cursor: pointer" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || indicateur.auth == true}" data-bs-toggle="modal" th:attr="data-bs-target='#suppression'+${indicateur.id}">
+                                            <i class="fa btn-circle pointer text-danger fa-trash-alt fa-lg" title="Suppression"></i>
+                                        </div>
+
+                                        <!-- Modal Information-->
+                                        <div class="modal fade" th:id="'information'+${indicateur.id}"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="informationLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="informationLabel">Planification de l'indicateur</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table class="table table-bordered w-100">
+                                                            <tr>
+                                                                <td class="fw-bold">Indicateur</td>
+                                                                <td th:text="${indicateur.indicateur}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Déscription</td>
+                                                                <td th:text="${indicateur.description}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Reference</td>
+                                                                <td th:text="${indicateur.reference}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Cible</td>
+                                                                <td th:text="${indicateur.cible}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Source de vérification</td>
+                                                                <td th:text="${indicateur.sourceVerification}"></td>
+                                                            </tr>
+                                                        </table>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Modification-->
+                                        <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || indicateur.auth == true}" th:id="'modification'+${indicateur.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modificationLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="modificationLabel">Modification de l'indicateur</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form th:action="@{/indicateurs/planification/modification}" method="post">
+
+                                                            <input name="code" th:value="${indicateur.id}" readonly hidden>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" name="indicateur" class="form-control" required placeholder="Indicateur" th:value="${indicateur.indicateur}">
+                                                                <label>Indicateur</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" name="description" required placeholder="Déscription de l'indicateur" th:value="${indicateur.description}">
+                                                                <label>Déscription</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control" name="reference" required placeholder="La référence" th:value="${indicateur.reference}">
+                                                                <label>Référence</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control" name="cible" required placeholder="La cible" th:value="${indicateur.cible}">
+                                                                <label>Cible</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" name="source" required placeholder="Source de verification" th:value="${indicateur.sourceVerification}">
+                                                                <label>Source verification</label>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                <button type="submit" class="btn btn-primary">Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Suppression-->
+                                        <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || indicateur.auth == true}" th:id="'suppression'+${indicateur.id}" tabindex="-1" aria-labelledby="suppressionLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="suppressionLabel">Suppresion de l'indicateur</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="text-center"
+                                                              th:action="@{/indicateurs/planification/suppression}">
+                                                            <input hidden name="id"
+                                                                   th:value="${indicateur.id}"/>
+                                                            <div class="h5 text-danger">confirmation</div>
+                                                            <div class="h6">Voulez-vous vraiment suprimer cette planification ?
+                                                                <br>Cette action est irreversible!
+                                                            </div>
+                                                            <div class='form-group modal-footer row'>
+                                                                <div class='col-sm-12 d-flex justify-content-between'>
+                                                                    <button class='btn btn-secondary' data-bs-dismiss="modal" type='button'>Annuler</button>
+                                                                    <button class='btn btn-primary' type='submit'>Suprimer</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                <div th:replace="fragment::footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $('#projet').on('change', function () {
+            this.form.submit();
+        });
+    });
+</script>
+</body>
+</html>

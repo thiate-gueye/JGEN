@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="fragment::head"></div>
+</head>
+<body>
+<section class="section pb-0">
+  <div class="container w-50">
+    <div class="row justify-content-between align-items-center">
+      <h1 class=" text-center text-primary mb-2">
+        Régistration
+      </h1>
+      <div class="text-center">
+        <img th:src="@{/assets/img/logo_JGEN.png}" alt="suivi" class="m-4">
+        <div th:if="${param.error}">
+          <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-family: 'Merriweather', sans-serif;">
+            Nom d'utilisateur ou mot de passe incorrect!!!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+        <form th:action="@{/user/registration}" method="post" th:object="${users}" onsubmit="return validateForm()">
+          <div class="form-floating mb-3">
+            <input th:field="*{id}" th:value="${users.id}" readonly hidden>
+            <input type="text" class="form-control" required placeholder="Prénom" th:value="${users.prenom}" th:field="*{prenom}">
+            <label>Prénom</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" required placeholder="Nom" th:value="${users.nom}" th:field="*{nom}">
+            <label>Nom</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" required placeholder="Email utilisateur" th:value="${users.username}" th:field="*{username}">
+            <label>Email utilisateur</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" required placeholder="Mot de passe" th:field="*{password}">
+            <label>Mot de passe</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="confirmPassword" name="confirm" required placeholder="Confirmation mot de passe">
+            <label>Confirmation mot de passe</label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="goBack()">Annuler</button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+<div th:replace="fragment::footer"></div>
+<script>
+  function goBack() {
+    window.history.back(); // Retourne à la page précédente
+  }
+
+  function validateForm() {
+    let password = document.getElementById("password");
+    let confirmPassword = document.getElementById("confirmPassword");
+
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.classList.add("is-invalid");
+      return false;
+    }
+    return true;
+  }
+</script>
+</body>
+</html>

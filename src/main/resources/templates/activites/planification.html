@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragment::head"></div>
+</head>
+
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="fragment::menu"></div>
+    <!-- Content Wrapper -->
+    <div class="d-flex flex-column" id="content-wrapper">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Begin Page Content -->
+            <div class="container">
+                <div class="card card-page shadow mb-4 table-responsive">
+                    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h3 class="m-0 font-weight-bold text-primary">Planification des activités</h3>
+                        <div class="cardHeader">
+                            <a class="btn btn-primary show-modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Nouveau <span class="fas fa-plus"></span></a>
+                        </div>
+
+                        <!-- Modal d'ajout -->
+                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Planification de l'activité</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form th:action="@{/activites/planification/ajout}" method="post" th:object="${new_activite}">
+
+                                            <div class="form-floating mb-3">
+                                                <select th:field="*{idOS}" class="form-select" required>
+                                                    <span th:each="objectif:${listObjectifs}">
+                                                        <option th:value="${objectif.id}" th:text="${objectif.libelle}"></option>
+                                                    </span>
+                                                </select>
+                                                <label>Objectif spécifique</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" required placeholder="L'activité" th:field="*{activite}">
+                                                <label>Activité</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" placeholder="Cible" th:field="*{cible}">
+                                                <label>Cible</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" required placeholder="Résultat attendu" th:field="*{resultatAttendu}">
+                                                <label>Résultat attendu</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" required placeholder="Budget" th:field="*{budget}">
+                                                <label>Budget</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" required placeholder="Résponsable" th:field="*{responsable}">
+                                                <label>Résponsable</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" required placeholder="Lieu" th:field="*{lieu}">
+                                                <label>Lieu</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="date" class="form-control" required placeholder="Date début" th:field="*{dateDebut}">
+                                                <label>Date début</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="date" class="form-control" required placeholder="Date fin" th:field="*{dateFin}">
+                                                <label>Date fin</label>
+                                            </div>
+
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-header py-2 d-sm-flex align-items-center justify-content-end">
+                            <a class="btn btn-outline-success" th:href="@{/export/excel/activites/planification}">Telecharger <span class="fas fa-download"></span></a>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered w-100">
+                                <thead>
+                                <tr class="text-primary">
+                                    <td>Objectif spécifique</td>
+                                    <td>Activité</td>
+                                    <td>Cible</td>
+                                    <td>Résultat attendu</td>
+                                    <td>Budget</td>
+                                    <td>Résponsable</td>
+                                    <td>Lieu</td>
+                                    <td>Date début</td>
+                                    <td>Date fin</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="activite:${listActivites}">
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${activite.objectifSpecifique.libelle}"></td>
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${activite.activite}"></td>
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${activite.cible}"></td>
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${activite.resultatAttendu}"></td>
+                                    <td class="text-truncate" style="max-width: 150px;" th:text="${activite.formatBudget()+' TTC'}"></td>
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${activite.responsable}"></td>
+                                    <td class="text-truncate" style="max-width: 200px;" th:text="${activite.lieu}"></td>
+                                    <td th:text="${activite.dateDebut}"></td>
+                                    <td th:text="${activite.dateFin}"></td>
+                                    <td class="d-flex align-content-lg-end">
+                                        <div class="mx-2" style="cursor: pointer" data-bs-toggle="modal" th:attr="data-bs-target='#information'+${activite.id}">
+                                            <i class="fa btn-circle pointer text-primary fa-eye fa-lg" title="Information"></i>
+                                        </div>
+                                        <div class="mx-2" style="cursor: pointer" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || activite.auth == true}" data-bs-toggle="modal" th:attr="data-bs-target='#modification'+${activite.id}">
+                                            <i class="fa fa-regular pointer btn-circle fa-lg text-warning fa-pen-alt" title="Modification"></i>
+                                        </div>
+                                        <div class="mx-2" style="cursor: pointer" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || activite.auth == true}" data-bs-toggle="modal" th:attr="data-bs-target='#suppression'+${activite.id}">
+                                            <i class="fa btn-circle pointer text-danger fa-trash-alt fa-lg" title="Suppression"></i>
+                                        </div>
+
+                                        <!-- Modal Information-->
+                                        <div class="modal fade" th:id="'information'+${activite.id}"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="informationLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="informationLabel">Planification de l'activité</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table class="table table-bordered w-100">
+                                                            <tr>
+                                                                <td class="fw-bold">Objectif spécifique</td>
+                                                                <td th:text="${activite.objectifSpecifique.libelle}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Activité</td>
+                                                                <td th:text="${activite.activite}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Cible</td>
+                                                                <td th:text="${activite.cible}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Résultat attendu</td>
+                                                                <td th:text="${activite.resultatAttendu}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Budget</td>
+                                                                <td th:text="${activite.formatBudget()+' TTC'}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Résponsable</td>
+                                                                <td th:text="${activite.responsable}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">lieu</td>
+                                                                <td th:text="${activite.lieu}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Date de début</td>
+                                                                <td th:text="${activite.dateDebut}"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fw-bold">Date de fin</td>
+                                                                <td th:text="${activite.dateFin}"></td>
+                                                            </tr>
+                                                        </table>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Modification-->
+                                        <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || activite.auth == true}" th:id="'modification'+${activite.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modificationLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="modificationLabel">Modification de l'activité</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form th:action="@{/activites/planification/modification}" method="post">
+
+                                                            <input name="code" th:value="${activite.id}" readonly hidden>
+
+                                                            <div class="form-floating mb-3">
+                                                                <select class="form-select" required name="idOS">
+                                                                    <option th:value="${activite.objectifSpecifique.id}" th:text="${activite.objectifSpecifique.libelle}"></option>
+                                                                    <span th:each="objectif:${listObjectifs}">
+                                                                        <option th:value="${objectif.id}" th:text="${objectif.libelle}"></option>
+                                                                    </span>
+                                                                </select>
+                                                                <label>Objectif spécifique</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" name="activite" required class="form-control" placeholder="L'activité" th:value="${activite.activite}">
+                                                                <label>Activité</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" name="responsable" required class="form-control" placeholder="Résponsable" th:value="${activite.responsable}">
+                                                                <label>Résponsable</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control" name="resultatAttendu" required placeholder="Résultat attendu" th:value="${activite.resultatAttendu}">
+                                                                <label>Résultat attendu</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control" name="cible" placeholder="Cible" th:value="${activite.cible}">
+                                                                <label>Cible</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="date" name="dateDebut" required class="form-control" placeholder="Date début" th:value="${activite.dateDebut}">
+                                                                <label>Date début</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="date" name="dateFin" required class="form-control" placeholder="Date fin" th:value="${activite.dateFin}">
+                                                                <label>Date fin</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" name="budget" class="form-control" placeholder="Budget" th:value="${activite.budget}">
+                                                                <label>Budget</label>
+                                                            </div>
+
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" name="lieu" class="form-control" placeholder="Lieu" th:value="${activite.lieu}">
+                                                                <label>Lieu</label>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                <button type="submit" class="btn btn-primary">Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Suppression-->
+                                        <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR' || activite.auth == true}" th:id="'suppression'+${activite.id}" tabindex="-1" aria-labelledby="suppressionLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="suppressionLabel">Suppresion de l'activité</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="text-center"
+                                                              th:action="@{/activites/planification/suppression}">
+                                                            <input hidden name="id"
+                                                                   th:value="${activite.id}"/>
+                                                            <div class="h5 text-danger">confirmation</div>
+                                                            <div class="h6">Voulez-vous vraiment suprimer cette planification ?
+                                                                <br>Cette action est irreversible!
+                                                            </div>
+                                                            <div class='form-group modal-footer row'>
+                                                                <div class='col-sm-12 d-flex justify-content-between'>
+                                                                    <button class='btn btn-secondary' data-bs-dismiss="modal" type='button'>Annuler</button>
+                                                                    <button class='btn btn-primary' type='submit'>Suprimer</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                <div th:replace="fragment::footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $('#projet').on('change', function () {
+            this.form.submit();
+        });
+    });
+</script>
+</body>
+</html>

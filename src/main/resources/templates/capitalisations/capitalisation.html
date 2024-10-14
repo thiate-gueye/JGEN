@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragment::head"></div>
+    <style>
+        #f2, #f3, #f4{
+            display: none;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="fragment::menu"></div>
+    <!-- Content Wrapper -->
+    <div class="d-flex flex-column" id="content-wrapper">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Begin Page Content -->
+            <div class="container">
+                <div class="card card-page shadow mb-4 table-responsive">
+                    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h3 class="m-0 font-weight-bold text-primary">Capitalisation</h3>
+                        <div class="cardHeader">
+                            <a class="btn btn-primary show-modal" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR'}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Nouveau <span class="fas fa-plus"></span></a>
+                        </div>
+
+                        <!-- Modal d'ajout -->
+                        <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR'}" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Formulaire d'ajout</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form th:action="@{/capitalisations/ajout}" method="post">
+
+                                            <div id="f1">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" required name="thematique" placeholder="Thématique">
+                                                    <label>Thématique</label>
+                                                </div>
+
+                                                <legend class="h5">Contraintes ou difficultés rencontrés dans la réalisation :</legend>
+
+                                                <div id="contrainte">
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" class="form-control" required name="contraintes[]" placeholder="Contrainte">
+                                                        <label>Contrainte</label>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-primary" onclick="newInput('contrainte','contraintes', 'Contrainte')">Nouvelle</button>
+                                                <button type="button" class="btn btn-secondary" onclick="remokeInput('contrainte')">Supprimer</button>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary act" name="bn1" onclick="nextForm(this)">Suivant</button>
+                                                </div>
+                                            </div>
+                                            <div id="f2">
+                                                <legend>Cas de réussites :</legend>
+                                                <div id="reussite">
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" class="form-control" required name="reussites[]" placeholder="Réussite">
+                                                        <label>Réussite</label>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-primary" onclick="newInput('reussite','reussites', 'Réussite')">Nouvelle</button>
+                                                <button type="button" class="btn btn-secondary" onclick="remokeInput('reussite')">Supprimer</button>
+
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" name="bp1" onclick="prevForm(this)">Précédent</button>
+                                                    <button type="button" class="btn btn-primary" name="bn2" onclick="nextForm(this)">Suivant</button>
+                                                </div>
+                                            </div>
+                                            <div id="f3">
+                                                <legend>Leçons apprises/constats majeurs (positifs ou négatifs) :</legend>
+                                                <div id="lecon">
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" class="form-control" required name="lecons[]" placeholder="Leçon apprise">
+                                                        <label>Leçon apprise</label>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-primary" onclick="newInput('lecon','lecons', 'Leçon apprise')">Nouvelle</button>
+                                                <button type="button" class="btn btn-secondary" onclick="remokeInput('lecon')">Supprimer</button>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" name="pb2" onclick="prevForm(this)">Précédent</button>
+                                                    <button type="button" class="btn btn-primary" name="bn3" onclick="nextForm(this)">Suivant</button>
+                                                </div>
+                                            </div>
+                                            <div id="f4">
+                                                <legend>Actions futures prioritaires (solutions/actions) :</legend>
+
+                                                <div id="action">
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" class="form-control" required name="actions[]" placeholder="Action future">
+                                                        <label>Action future</label>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-primary" onclick="newInput('action','actions', 'Leçon apprise')">Nouvelle</button>
+                                                <button type="button" class="btn btn-secondary" onclick="remokeInput('action')">Supprimer</button>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" name="bp3" onclick="prevForm(this)">Précédent</button>
+                                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-header py-2 d-sm-flex align-items-center justify-content-end"></div>
+                        <div class="accordion" id="accordionExample">
+                            <span th:each="capitalisation:${listCapitalisations}">
+                                <div class="accordion-item">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed text-primary h6" type="button" th:attr="data-bs-target='#capitalisation'+${capitalisation.id}" data-bs-toggle="collapse" aria-expanded="false" th:attrappend="aria-controls='capitalisation'+${capitalisation.id}">
+                                                   <span th:text="${capitalisation.thematique}"></span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div class="col-1" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR'}">
+                                            <div class="h5 d-flex justify-content-lg-start my-lg-3">
+                                                <div class="me-3" style="cursor: pointer" data-bs-toggle="modal" th:attr="data-bs-target='#modification'+${capitalisation.id}">
+                                                    <i class="fa fa-pen-alt text-warning"></i>
+                                                </div>
+                                                <div class="me-3" style="cursor: pointer" th:if="${#httpSession.getAttribute('access') == 'ADMIN'}" data-bs-toggle="modal" th:attr="data-bs-target='#suppression'+${capitalisation.id}">
+                                                     <i class="fa fa-trash-alt text-danger"></i>
+                                                </div>
+                                            </div>
+                                            <!-- Modal Modification-->
+                                            <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR'}" th:id="'modification'+${capitalisation.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modificationLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="modificationLabel">Modification de la capitalisation</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form th:action="@{/capitalisations/modification}" method="post">
+                                                                <input name="id" readonly hidden th:value="${capitalisation.id}">
+                                                                <div th:id="${'contraintes'+capitalisation.id}" class="panel">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="text" class="form-control" readonly required name="thematique" th:value="${capitalisation.thematique}" placeholder="Thématique">
+                                                                        <label>Thématique</label>
+                                                                    </div>
+
+                                                                    <legend class="h5">Contraintes ou difficultés rencontrés dans la réalisation :</legend>
+
+                                                                    <div th:id="${'contrainte'+capitalisation.id}">
+                                                                        <span th:each="contrainte:${capitalisation.getInfoByType('Contrainte')}">
+                                                                            <div class="form-floating mb-3">
+                                                                                <input type="text" class="form-control" required th:value="${contrainte.getLibelle()}" name="contraintes[]" placeholder="Contrainte">
+                                                                                <label>Contrainte</label>
+                                                                            </div>
+                                                                        </span>
+
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-primary" th:attr="onclick='newInput(\'contrainte'+${capitalisation.id}+'\', \'contraintes\', \'Contrainte\')'">Nouvelle</button>
+                                                                    <button type="button" class="btn btn-secondary" th:attr="onclick='remokeInput(\'contrainte'+${capitalisation.id}+'\')'">Supprimer</button>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-primary act" th:onclick="'showPanel(\'reussites'+${capitalisation.id}+'\')'">Suivant</button>
+                                                                    </div>
+                                                                </div >
+                                                                <div th:id="${'reussites'+capitalisation.id}" class="panel" style="display:none;">
+                                                                    <legend>Cas de réussites :</legend>
+                                                                    <div th:id="${'reussite'+capitalisation.id}">
+                                                                        <span th:each="reussite:${capitalisation.getInfoByType('Reussite')}">
+                                                                            <div class="form-floating mb-3">
+                                                                                <input type="text" class="form-control" th:value="${reussite.getLibelle()}" required name="reussites[]" placeholder="Réussite">
+                                                                                <label>Réussite</label>
+                                                                            </div>
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <button type="button" class="btn btn-primary" th:attr="onclick='newInput(\'reussite'+${capitalisation.id}+'\', \'reussites\', \'Réussite\')'">Nouvelle</button>
+                                                                    <button type="button" class="btn btn-secondary" th:attr="onclick='remokeInput(\'reussite'+${capitalisation.id}+'\')'">Supprimer</button>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" th:onclick="'showPanel(\'contraintes'+${capitalisation.id}+'\')'">Précédent</button>
+                                                                        <button type="button" class="btn btn-primary" th:onclick="'showPanel(\'lecons'+${capitalisation.id}+'\')'">Suivant</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div th:id="${'lecons'+capitalisation.id}" class="panel" style="display:none;">
+                                                                    <legend>Leçons apprises/constats majeurs (positifs ou négatifs) :</legend>
+                                                                    <div th:id="${'lecon'+capitalisation.id}">
+                                                                        <span th:each="lecon:${capitalisation.getInfoByType('Lecon')}">
+                                                                            <div class="form-floating mb-3">
+                                                                                <input type="text" class="form-control" th:value="${lecon.getLibelle()}" required name="lecons[]" placeholder="Leçon apprise">
+                                                                                <label>Leçon apprise</label>
+                                                                            </div>
+                                                                        </span>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-primary" th:attr="onclick='newInput(\'lecon'+${capitalisation.id}+'\', \'lecons\', \'Leçon apprise\')'">Nouvelle</button>
+                                                                    <button type="button" class="btn btn-secondary" th:attr="onclick='remokeInput(\'lecon'+${capitalisation.id}+'\')'">Supprimer</button>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" th:onclick="'showPanel(\'reussites'+${capitalisation.id}+'\')'">Précédent</button>
+                                                                        <button type="button" class="btn btn-primary" th:onclick="'showPanel(\'actions'+${capitalisation.id}+'\')'">Suivant</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div th:id="${'actions'+capitalisation.id}" class="panel" style="display:none;">
+                                                                    <legend>Actions futures prioritaires (solutions/actions) :</legend>
+
+                                                                    <div th:id="${'action'+capitalisation.id}">
+                                                                        <span th:each="action:${capitalisation.getInfoByType('Action')}">
+                                                                            <div class="form-floating mb-3">
+                                                                                <input type="text" class="form-control" required th:value="${action.getLibelle()}" name="actions[]" placeholder="Action future">
+                                                                                <label>Action future</label>
+                                                                            </div>
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <button type="button" class="btn btn-primary" th:attr="onclick='newInput(\'action'+${capitalisation.id}+'\', \'actions\', \'Action future\')'">Nouvelle</button>
+                                                                    <button type="button" class="btn btn-secondary" th:attr="onclick='remokeInput(\'action'+${capitalisation.id}+'\')'">Supprimer</button>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" th:onclick="'showPanel(\'lecons'+${capitalisation.id}+'\')'">Précédent</button>
+                                                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Modal Suppression-->
+                                            <div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN'}" th:id="'suppression'+${capitalisation.id}" tabindex="-1" aria-labelledby="suppressionLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="suppressionLabel">Suppression de la capitalisation</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form class="text-center" th:action="@{/capitalisations/suppression}">
+                                                                <input hidden name="id" th:value="${capitalisation.id}"/>
+                                                                <div class="h5 text-danger">confirmation</div>
+                                                                <div class="h6">Voulez-vous vraiment supprimer cette capitalisation ?
+                                                                    <br>Cette action est irreversible!
+                                                                </div>
+                                                                <div class='form-group modal-footer row'>
+                                                                    <div class='col-sm-12 d-flex justify-content-between'>
+                                                                        <button class='btn btn-secondary' data-bs-dismiss="modal" type='button'>Annuler</button>
+                                                                        <button class='btn btn-primary' type='submit'>Supprimer</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div th:id="'capitalisation'+${capitalisation.id}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <table class="table-bordered">
+                                            <tbody>
+                                            <tr>
+                                                <td class="text-danger fw-bold col-6">Contraintes ou difficultés rencontrés dans la réalisation :</td>
+                                                <td>
+                                                    <span class="col-6" th:each="info:${capitalisation.getInfoByType('Contrainte')}">
+                                                        <span class="text-danger" th:text="${info.getLibelle()}"></span><br>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-success fw-bold">Cas de réussites :</td>
+                                                <td>
+                                                    <span class="col-6" th:each="info:${capitalisation.getInfoByType('Reussite')}">
+                                                       <span class="text-success" th:text="${info.getLibelle()}"></span><br>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-info fw-bold">Leçons apprises/constats majeurs (positifs ou négatifs) :</td>
+                                                <td>
+                                                    <span class="col-6" th:each="info:${capitalisation.getInfoByType('Lecon')}">
+                                                        <span class="text-info" th:text="${info.getLibelle()}"></span><br>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-warning fw-bold">Actions futures prioritaires (solutions/actions) :</td>
+                                                <td>
+                                                    <span class="col-6" th:each="info:${capitalisation.getInfoByType('Action')}">
+                                                        <span class="text-warning" th:text="${info.getLibelle()}"></span><br>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                </div>
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+                <div th:replace="fragment::footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragment::head"></div>
+</head>
+
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <div th:replace="fragment::menu"></div>
+    <!-- Content Wrapper -->
+    <div class="d-flex flex-column" id="content-wrapper">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Begin Page Content -->
+            <div class="container">
+                <div class="card card-page shadow mb-4 table-responsive">
+                    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                        <h3 class="m-0 font-weight-bold text-primary">Gestion des utilisateurs</h3>
+                        <div class="cardHeader">
+                            <a class="btn btn-primary show-modal" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Nouveau <span class="fas fa-plus"></span></a>
+                        </div>
+
+                        <!-- Modal d'ajout -->
+                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajout d'un utilisateur</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form th:action="@{/registration}" method="post" th:object="${users}">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="prenom" th:field="*{prenom}" required placeholder="Prénom">
+                                                <label for="prenom">Prénom</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="nom" th:field="*{nom}" required placeholder="Nom">
+                                                <label for="nom">Nom</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="email" class="form-control" id="username" th:field="*{username}" required placeholder="Email d'utilisateur">
+                                                <label for="username">Email d'utilisateur</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="password" th:value="${users.password}" th:field="*{password}" readonly>
+                                                <label for="password">Mot de passe</label>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered w-100">
+                                <thead>
+                                <tr class="text-primary">
+                                    <td>Prénom</td>
+                                    <td>Nom</td>
+                                    <td>Email utilisateur</td>
+                                    <td>Type utilisateur</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="user : ${usersList}">
+                                    <td th:text="${user.prenom}"></td>
+                                    <td th:text="${user.nom}"></td>
+                                    <td th:text="${user.username}"></td>
+                                    <td th:text="${user.role == 'ADMIN' ? 'Admin' : (user.role == 'SUPERVISOR' ? 'Utilisateur Avancé' : (user.role == 'USER' ? 'Utilisateur Simple' : ''))}"></td>
+
+                                    <td class="d-flex align-content-lg-end">
+                                        <div class="mx-2" data-bs-toggle="modal" th:attr="data-bs-target='#modification'+${user.id}">
+                                            <i class="fa fa-regular pointer btn-circle fa-lg text-warning fa-pen-alt" title="Modification"></i>
+                                        </div>
+                                        <div class="mx-2" data-bs-toggle="modal" th:attr="data-bs-target='#suppression'+${user.id}">
+                                            <i class="fa btn-circle pointer text-danger fa-trash-alt fa-lg" title="Suppression"></i>
+                                        </div>
+                                    </td>
+
+                                    <!-- Modal Modification-->
+                                    <div class="modal fade" th:id="'modification'+${user.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modificationLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="modificationLabel">Changement type d'utilisateur</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form th:action="@{/users/changerole}" method="post">
+
+                                                        <input name="id" th:value="${user.id}" readonly hidden>
+
+                                                        <div class="form-floating mb-3">
+                                                            <input type="text" required readonly class="form-control" placeholder="Prénom" th:value="${user.prenom}">
+                                                            <label>Prénom</label>
+                                                        </div>
+
+                                                        <div class="form-floating mb-3">
+                                                            <input type="text" required readonly class="form-control" placeholder="Nom" th:value="${user.nom}">
+                                                            <label>Nom</label>
+                                                        </div>
+
+                                                        <div class="form-floating mb-3">
+                                                            <input type="email" name="username" required readonly class="form-control" placeholder="Email d'utilisateur" th:value="${user.username}">
+                                                            <label>Email d'utilisateur</label>
+                                                        </div>
+
+                                                        <div class="form-floating mb-3">
+                                                            <select class="form-select" required name="role">
+                                                                <option th:value="${user.role}"
+                                                                        th:text="${user.role == 'ADMIN' ? 'Admin' : (user.role == 'SUPERVISOR' ? 'Utilisateur Avancé' : (user.role == 'USER' ? 'Utilisateur Simple' : ''))}" ></option>
+                                                                <option value="ADMIN">Admin</option>
+                                                                <option value="SUPERVISOR">Utilisateur avancé</option>
+                                                                <option value="USER">Utilisateur simple</option>
+                                                            </select>
+                                                            <label>Type d'utilisateur</label>
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                            <button type="submit" class="btn btn-primary">Modifier</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal Suppression-->
+                                    <div class="modal fade" th:id="'suppression'+${user.id}" tabindex="-1" aria-labelledby="suppressionLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="suppressionLabel">Suppresion d'un utilisateur</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form class="text-center"
+                                                          th:action="@{/users/suppression}">
+                                                        <input hidden name="id"
+                                                               th:value="${user.id}"/>
+                                                        <div class="h5 text-danger text-center">confirmation</div>
+                                                        <div class="h6 text-center">Voulez-vous vraiment supprimer cet utilisateur ?
+                                                            <br>Cette action est irreversible!
+                                                        </div>
+                                                        <div class='form-group modal-footer row'>
+                                                            <div class='col-sm-12 d-flex justify-content-between'>
+                                                                <button class='btn btn-secondary' data-bs-dismiss="modal" type='button'>Annuler</button>
+                                                                <button class='btn btn-primary' type='submit'>Suprimer</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                <div th:replace="fragment::footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

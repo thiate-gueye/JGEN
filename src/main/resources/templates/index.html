@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<div th:replace="fragment::head"></div>
+	</head>
+	<body>
+	<section class="section pb-0">
+		<div class="container">
+			<div class="row justify-content-between align-items-center">
+				<h1 class=" text-center text-primary mb-2">
+					Bienvenue sur le logiciel de suivi-évaluation et capitalisation de JGEN Sénégal
+				</h1>
+				<div class="col-6 text-center">
+					<img th:src="@{/assets/img/logo_JGEN.png}" alt="suivi" class="m-4">
+					<div>
+						<button type="button" class="btn-blue btn-lg m-2" data-bs-toggle="offcanvas" data-bs-target="#listProjet" aria-controls="listProjetExample">Choisir un projet</button>
+						<button type="button" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR'}" class="show-modal btn-org btn-lg m-2" data-bs-toggle="modal" data-bs-target="#firstModal">Ajouter un projet</button>
+					</div>
+					<div class="row mt-3">
+						<div class="center">
+							<h6>Réalisé par : </h6>
+							<img th:src="@{/assets/img/logo_cafe.png}" alt="cafe" class="log">
+						</div>
+						<p class="mt-5">"<i>Il n’y a pas de vent favorable pour celui qui ne sait pas où il va.</i>" <strong>SENEQUE</strong></p>
+					</div>
+				</div>
+
+				<div class="modal fade" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR'}" id="firstModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+					<div class="modal-dialog modal-lg modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="staticBackdropLabel">Ajout d'un projet</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form th:action="@{/projects/ajout}" method="post" th:object="${new_project}">
+
+									<div class="modal-header">
+										<h1 class="modal-title fs-5">Informations globales</h1>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" required placeholder="Nom du projet" th:field="*{nom}">
+										<label>Nom projet</label>
+									</div>
+
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" required placeholder="Bailleur" th:field="*{bailleur}">
+										<label>Bailleur</label>
+									</div>
+
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" required placeholder="Déscription du projet" th:field="*{description}">
+										<label>Déscription du projet</label>
+									</div>
+
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" required placeholder="Cible" th:field="*{cible}">
+										<label>Cible</label>
+									</div>
+
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" required placeholder="Objectif général" th:field="*{objectifGeneral}">
+										<label>Objectif général</label>
+									</div>
+
+									<div id="inputContainer">
+										<div class="modal-header">
+											<h1 class="modal-title fs-5">Objectifs spécifiques</h1>
+										</div>
+										<div class="form-floating mb-3">
+											<input type="text" class="form-control" required name="objectifs[]" placeholder="Objectif spécifique">
+											<label>Objectif spécifique</label>
+										</div>
+									</div>
+									<button type="button" class="btn btn-primary" onclick="addInput()">Nouveau</button>
+									<button type="button" class="btn btn-secondary" onclick="removeInput()">Supprimer</button>
+
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+										<button type="submit" class="btn btn-primary">Enregistrer</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="offcanvas offcanvas-start" tabindex="-1" id="listProjet" aria-labelledby="listProjetLabel">
+					<div class="offcanvas-header">
+						<h5 class="offcanvas-title" id="offcanvasExampleLabel">Liste des projets</h5>
+						<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+					</div>
+					<div class="offcanvas-body">
+						<span th:each="project:${listProjects}">
+							<a class="nav-link pb-0 mb-2" th:href="@{'/projects/?req='+${project.getNom()}}" th:text="'Projet '+${project.nom}"></a>
+						</span>
+
+					</div>
+				</div>
+
+				<div id="carouselExampleControls" class="col-6 carousel slide" data-bs-ride="carousel">
+					<div class="carousel-inner">
+
+						<div class="carousel-item active">
+							<img th:src="@{/assets/img/im3.png}" class="d-block img" alt="suivi">
+						</div>
+						<div class="carousel-item">
+							<img th:src="@{/assets/img/img1.png}" class="d-block img" alt="suivi">
+						</div>
+						<div class="carousel-item">
+							<img th:src="@{/assets/img/im2.jpg}" class="d-block img" alt="suivi3">
+						</div>
+						<div class="carousel-item">
+							<img th:src="@{/assets/img/img3.jpg}" class="d-block img" alt="suivi2">
+						</div>
+
+					</div>
+					<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</section>
+	<div th:replace="fragment::footer"></div>
+	</body>
+</html>

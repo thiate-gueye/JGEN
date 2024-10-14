@@ -1,0 +1,300 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="head">
+    <meta charset="utf-8"/>
+    <!-- Font awesome cdn CSS-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.css}">
+
+    <title>plateforme suivi-evaluation JGEN</title>
+</div>
+
+<div th:fragment="menu">
+    <header class="sticky-top navigation mb-5">
+        <div class=container>
+            <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+            <a class=navbar-brand href="#"><img class="img-fluid" th:src="@{/assets/img/logo_JGEN.png}" alt="jgen"></a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navigation">
+                <i class="ti-align-right h4 text-dark"></i></button>
+                <!-- Menu de navigation -->
+            <div class="collapse navbar-collapse text-center" id=navigation>
+                <div class="navbar-nav mx-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/home}">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{'/projects/?req='+${#httpSession.getAttribute('projet')}}">Dashboard</a></li>
+
+                    <li class="nav-item dropdown">
+                        <!-- Lien principal -->
+                        <a class="nav-link dropdown-toggle" href="#" id="planifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Planification
+                        </a>
+                        <!-- Sous-menu -->
+                        <ul class="dropdown-menu" aria-labelledby="planifications">
+                            <li><a class="nav-link pb-0" th:href="@{/indicateurs/planification}">Indicateurs</a></li>
+                            <li><a class="nav-link pb-0" th:href="@{/activites/planification}">Activités</a></li>
+                            <li><a class="nav-link pb-0" th:href="@{/formations/planification}">Formations</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <!-- Lien principal -->
+                        <a class="nav-link dropdown-toggle" href="#" id="suivis" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Suivi
+                        </a>
+                        <!-- Sous-menu -->
+                        <ul class="dropdown-menu" aria-labelledby="suivis">
+                            <li><a class="nav-link pb-0" th:href="@{/indicateurs/suivi}">Indicateurs</a></li>
+                            <li><a class="nav-link pb-0" th:href="@{/activites/suivi}">Activités</a></li>
+                            <li><a class="nav-link pb-0" th:href="@{/formations/suivi}">Formations</a></li>
+                         </ul>
+                     </li>
+
+                    <li class="nav-item"><a class="nav-link" th:href="@{/capitalisations/}">Capitalisation</a></li>
+
+                    <li class="nav-item dropdown">
+                        <!-- Lien principal -->
+                        <a class="nav-link dropdown-toggle" href="#" id="plus" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fs-4 fa-user-lock"></i>
+                        </a>
+                        <!-- Sous-menu -->
+                        <ul class="dropdown-menu dropdown-menu-sm-end" aria-labelledby="plus">
+                            <a class="nav-link pb-0" th:href="@{/user/modification}">Profil</a>
+                            <a class="nav-link pb-0" th:if="${#httpSession.getAttribute('access') == 'ADMIN'}" th:href="@{/administer}">Utilisateurs</a>
+                            <a class="nav-link pb-0" th:href="@{/logout}">Déconnexion</a>
+                        </ul>
+                    </li>
+
+                </div>
+            </div>
+        </nav>
+            <div class="col text-end" th:if="${page}== 'projects'">
+                <nav class="row-6 navbar navbar-light text-end">
+                    <div class="container-fluid d-flex justify-content-end">
+                        <div class="d-flex text-end">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+                <div class="row-6 collapse justify-content-end" id="navbarToggleExternalContent">
+                    <div class="text-end">
+                        <a class="nav-link pb-0" data-bs-toggle="modal" data-bs-target="#fiche" href="#">Fiche synoptique du projet</a>
+                        <a class="nav-link pb-0" th:if="${#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR'}" data-bs-toggle="modal" data-bs-target="#projects" href="#">Modifier le projet</a>
+                        <a class="nav-link pb-0" th:if="${#httpSession.getAttribute('access') == 'ADMIN'}" data-bs-toggle="modal" data-bs-target='#suppression' href="#">Supprimer le projet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modal Suppression-->
+    <div th:if="${page == 'projects' && #httpSession.getAttribute('access') == 'ADMIN'}" class="modal fade" id="suppression" tabindex="-1" aria-labelledby="suppressionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="suppressionLabel">Suppresion du projet</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="text-center"
+                          th:action="@{/projects/suppression}">
+                        <input hidden name="id"
+                               th:value="${projet.id}"/>
+                        <div class="h5 text-danger">confirmation</div>
+                        <div class="h6">Voulez-vous vraiment supprimer ce projet dans l'ensemble ?
+                            <br>Cette action est irreversible!
+                        </div>
+                        <div class='form-group modal-footer row'>
+                            <div class='col-sm-12 d-flex justify-content-between'>
+                                <button class='btn btn-secondary' data-bs-dismiss="modal" type='button'>Annuler</button>
+                                <button class='btn btn-primary' type='submit'>Suprimer</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de fiche synoptique du projet -->
+    <div th:if="${page}== 'projects'" class="modal fade" id="fiche" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ficheProject" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="ficheProject">Fiche synoptique du projet</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered w-100 bor">
+                            <tr>
+                                <td colspan="8" class="h5 title fw-bold text-center text-primary">Informations globales</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="h6 title fw-bold text-center text-primary">Titre du projet</td>
+                                <td colspan="5" class="mb-2">
+                                    <div class="container" th:text="${projet.nom}"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="3" class="h6 title fw-bold text-center text-primary">Description du projet</td>
+                                <td colspan="5" class="mb-2">
+                                    <div class="container" th:text="${projet.description}"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="3" class="h6 title fw-bold text-center text-primary">Bailleur</td>
+                                <td colspan="5">
+                                    <div class="container" th:text="${projet.bailleur}"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="3" class="h6 title fw-bold text-center text-primary">Objectif général</td>
+                                <td colspan="5">
+                                    <div class="container" th:text="${projet.objectifGeneral}"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="3" class="h6 title fw-bold text-center text-primary">Cible</td>
+                                <td colspan="5">
+                                    <div class="container" th:text="${projet.cible}"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="8" class="h5 title fw-bold text-center text-primary">Objectifs spécifiques</td>
+                            </tr>
+
+                            <tr th:each="objectif,i : ${objectifs}">
+                                <td colspan="3" class="h6 subtitle fw-bold text-center text-primary" th:text="'OS '+${i.index + 1}"></td>
+                                <td colspan="5">
+                                    <div class="container" th:text="${objectif.libelle}"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="8" class="h5 title fw-bold text-center text-primary">Activités à développer</td>
+                            </tr>
+
+                            <tr th:each="activite, i : ${activites}">
+                                <td colspan="3" class="h6 subtitle fw-bold text-center text-primary" th:text="'Act '+${i.index + 1}"></td>
+                                <td colspan="5">
+                                    <div class="container" th:text="${activite.activite}"></div>
+                                </td>
+                            </tr>
+
+                            <tr th:each="formation, i : ${formations}">
+                                <td colspan="3" class="h6 subtitle fw-bold text-center text-primary" th:text="'Act '+${activites.size()+ i.index + 1}"></td>
+                                <td colspan="5">
+                                    <div class="container" th:text="${formation.thematique}"></div>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td colspan="8" class="h5 title fw-bold text-center text-primary">Indicateurs</td>
+                            </tr>
+
+                            <tr th:each="indicateur,i : ${indicateurs}">
+                                <td colspan="3" class="h6 subtitle fw-bold text-center text-primary" th:text="'Ind '+${i.index + 1}"></td>
+                                <td colspan="5">
+                                    <div class="container" th:text="${indicateur.indicateur}"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de modification d'un projet -->
+    <div th:if="${page == 'projects' && (#httpSession.getAttribute('access') == 'ADMIN' || #httpSession.getAttribute('access') == 'SUPERVISOR')}" class="modal fade" id="projects" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modifProjet" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modifProjet">Modification du projet</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/projects/modification}" method="post">
+
+                        <div class="form-floating mb-3">
+                            <input name="id" th:value="${projet.id}" readonly hidden>
+                            <input type="text" class="form-control" name="nom" readonly th:value="${projet.nom}" required placeholder="Nom du projet">
+                            <label>Nom projet</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="bailleur" th:value="${projet.bailleur}" required placeholder="Bailleur">
+                            <label>Bailleur</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="description" th:value="${projet.description}" required placeholder="Déscription du projet">
+                            <label>Déscription du projet</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="cible" th:value="${projet.cible}" required placeholder="Cible">
+                            <label>Cible</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="objectifGeneral" th:value="${projet.objectifGeneral}" required placeholder="Objectif général">
+                            <label>Objectif général</label>
+                        </div>
+
+                        <div id="inputContainer">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Objectifs spécifiques</h1>
+                            </div>
+                            <span th:each="objectif:${objectifs}">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" required name="objectifs[]" th:value="${objectif.libelle}" placeholder="Objectif spécifique">
+                                    <label>Objectif spécifique</label>
+                                </div>
+                            </span>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addInput()">Nouveau</button>
+                        <button type="button" class="btn btn-secondary" onclick="removeInput()">Supprimer</button>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Modifier</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="footer">
+    <footer>
+        <div class="container">
+            <div class="row align-items-center border-bottom py-5">
+                <div class="col-lg-4">
+                </div>
+                <div class="col-lg-4 text-center mb-4 mb-lg-0">
+                    <a class="navbar-brand" href="#">
+                        <small class="text-light">Copyright © 2024 JGEN SENEGAL</small>
+                    </a>
+                </div>
+                <div class="col-lg-4">
+                </div>
+            </div>
+            <div class="py-4 text-center">
+            </div>
+        </div>
+    </footer>
+    <script th:src="@{/assets/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.js}"></script>
+    <script th:src="@{/assets/js/main.js}"></script>
+</div>
