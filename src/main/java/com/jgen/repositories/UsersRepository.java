@@ -26,5 +26,8 @@ public interface UsersRepository extends JpaRepository<Users, Integer> {
 
     @Query("SELECT u.id FROM Users u WHERE u.username LIKE ?1")
     String getIdUser(String username);
+
+    @Query("SELECT count(u.username) from Users u")
+    int countUsers();
 }
 
