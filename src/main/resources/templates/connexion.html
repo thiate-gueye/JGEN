@@ -18,6 +18,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 </div>
+
+                <div th:if="${param.actif}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-family: 'Merriweather', sans-serif;">
+                        Ce compte est inactif!!!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
                 <form th:action="@{/login}" method="post" th:object="${user}">
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" required placeholder="Email utilisateur" th:field="*{username}">

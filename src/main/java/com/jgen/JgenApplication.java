@@ -31,6 +31,7 @@ public class JgenApplication {
                 users.setUsername("admin@jgen.sn");
                 users.setPassword(passwordEncoder.encode("MayaPasser"));
                 users.setRole("ADMIN");
+                users.setActif(true);
                 usersRepository.save(users);
             }
         };

@@ -5,6 +5,7 @@ import com.jgen.models.Users;
 import com.jgen.repositories.ProjetcsRepo;
 import com.jgen.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,9 +46,24 @@ public class RegistrationLoginController {
         }
     }
 
+    @GetMapping("/verifactif")
+    public String verifActifUser(HttpSession session){
+        if(usersRepository.isActif((String)session.getAttribute("email")))
+           return "redirect:/home";
+        else
+            return "redirect:/?actif=false";
+    }
+
+    @GetMapping("/changestatus")
+    public ResponseEntity<Void> updateStatus(@RequestParam boolean actif, @RequestParam String username) {
+        usersRepository.changeStatus(actif, username);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/home")
     public ModelAndView accueil(HttpSession session){
         ModelAndView model = new ModelAndView("index");
+
         session.setAttribute("access", usersRepository.getRoleUser((String)session.getAttribute("email")));
         session.setAttribute("owner", usersRepository.getIdUser((String)session.getAttribute("email")));
         Projects projects = new Projects();

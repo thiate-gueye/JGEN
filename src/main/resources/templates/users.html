@@ -3,6 +3,21 @@
 
 <head>
     <div th:replace="fragment::head"></div>
+    <style>
+        .form-check-input {
+            width: 5.5rem;
+            height: 1.5rem;
+            border: 1px solid grey;
+            outline: none;
+        }
+        .form-check-input:checked {
+            background-color: #FF0043;
+            border: 1px solid #FF0043;
+        }
+        .form-check-input:checked::before {
+            transform: translateX(3rem);
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -71,6 +86,7 @@
                                     <td>Nom</td>
                                     <td>Email utilisateur</td>
                                     <td>Type utilisateur</td>
+                                    <td>Actif</td>
                                     <td></td>
                                 </tr>
                                 </thead>
@@ -80,12 +96,18 @@
                                     <td th:text="${user.nom}"></td>
                                     <td th:text="${user.username}"></td>
                                     <td th:text="${user.role == 'ADMIN' ? 'Admin' : (user.role == 'SUPERVISOR' ? 'Utilisateur Avancé' : (user.role == 'USER' ? 'Utilisateur Simple' : ''))}"></td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input style="cursor: pointer" class="form-check-input" type="checkbox" th:id="${user.username}" role="switch" th:checked="${user.actif}">
+                                        </div>
+                                    </td>
+
 
                                     <td class="d-flex align-content-lg-end">
-                                        <div class="mx-2" data-bs-toggle="modal" th:attr="data-bs-target='#modification'+${user.id}">
+                                        <div class="mx-2" style="cursor: pointer" data-bs-toggle="modal" th:attr="data-bs-target='#modification'+${user.id}">
                                             <i class="fa fa-regular pointer btn-circle fa-lg text-warning fa-pen-alt" title="Modification"></i>
                                         </div>
-                                        <div class="mx-2" data-bs-toggle="modal" th:attr="data-bs-target='#suppression'+${user.id}">
+                                        <div class="mx-2" style="cursor: pointer" data-bs-toggle="modal" th:attr="data-bs-target='#suppression'+${user.id}">
                                             <i class="fa btn-circle pointer text-danger fa-trash-alt fa-lg" title="Suppression"></i>
                                         </div>
                                     </td>
@@ -175,6 +197,26 @@
                 </div>
                 <!-- End of Main Content -->
                 <div th:replace="fragment::footer"></div>
+                <script>
+                    $('input[type="checkbox"]').change(function() {
+                        let username = $(this).attr('id');
+                        let actif = $(this).is(':checked');
+
+                        $.ajax({
+                            type: 'GET',
+                            url: '/changestatus',
+                            data:{
+                                actif: actif,
+                                username: username
+                            },
+                            success: function(response) {
+                            },
+                            error: function(xhr, status, error) {
+
+                            }
+                        });
+                    });
+                </script>
             </div>
         </div>
     </div>

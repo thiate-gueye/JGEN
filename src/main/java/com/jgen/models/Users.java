@@ -22,4 +22,5 @@ public class Users {
     private String username;
     private String password = "Passer123";
     private String role;
+    private boolean actif = false;
 }

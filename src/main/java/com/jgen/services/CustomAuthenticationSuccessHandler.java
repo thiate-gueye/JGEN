@@ -27,6 +27,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         session.setAttribute("email", username);
 
         // Rediriger vers la page d'accueil
-        response.sendRedirect("/home");
+        response.sendRedirect("/verifactif");
     }
 }

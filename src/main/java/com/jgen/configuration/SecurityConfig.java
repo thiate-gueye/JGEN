@@ -41,6 +41,7 @@ public class SecurityConfig {
                             "/users/suppression",
                             "/users/changerole",
                             "/administer",
+                            "/changestatus",
                             "/registration"
                     ).hasAuthority("ADMIN")
                     // Toutes les autres requêtes nécessitent une authentification
