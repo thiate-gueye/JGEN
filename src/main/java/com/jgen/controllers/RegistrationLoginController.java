@@ -106,6 +106,7 @@ public class RegistrationLoginController {
         }
         users.setPassword(passwordEncoder.encode(users.getPassword()));
         users.setRole((String)session.getAttribute("access"));
+        users.setActif(true);
         usersRepository.save(users);
         return "redirect:/";
     }

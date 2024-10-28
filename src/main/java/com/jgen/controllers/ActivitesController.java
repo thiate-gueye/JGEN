@@ -33,7 +33,7 @@ public class ActivitesController {
 
     @GetMapping("/planification")
     public ModelAndView accueil(HttpSession session){
-        ModelAndView model = new ModelAndView("/activites/planification");
+        ModelAndView model = new ModelAndView("activites/planification");
         PlanificationActivites new_activite = new PlanificationActivites();
         List<PlanificationActivites> listActivites = activitesRepo.findAllByProjet((String)session.getAttribute("projet"));
         for (PlanificationActivites planif:listActivites) {
@@ -97,7 +97,7 @@ public class ActivitesController {
 
     @GetMapping("/suivi")
     public ModelAndView s_accueil(HttpSession session){
-        ModelAndView model = new ModelAndView("/activites/suivi");
+        ModelAndView model = new ModelAndView("activites/suivi");
         List<SuiviActivites> listSuivi = suiviActivitesRepo.findAllSuiviByProjet((String)session.getAttribute(("projet")));
         model.addObject("listSuivi", listSuivi);
         for (SuiviActivites suivi:listSuivi) {

@@ -44,6 +44,11 @@ public class SecurityConfig {
                             "/changestatus",
                             "/registration"
                     ).hasAuthority("ADMIN")
+                    .antMatchers(
+                            "/capitalisations",
+                            "/**/planification",
+                            "**/suivi"
+                    ).hasAnyAuthority("ADMIN", "SUPERVISOR", "USER")
                     // Toutes les autres requêtes nécessitent une authentification
                     .anyRequest().authenticated()
             )

@@ -35,7 +35,7 @@ public class FormationsController {
 
     @GetMapping("/planification")
     public ModelAndView accueil(HttpSession session){
-        ModelAndView model = new ModelAndView("/formations/planification");
+        ModelAndView model = new ModelAndView("formations/planification");
         List<PlanificationFormations> listFormations = formationsRepo.findAllByProjet((String)session.getAttribute("projet"));
         for (PlanificationFormations planif:listFormations) {
             if(planif.getOwner() == Integer.parseInt((String)session.getAttribute("owner")))
@@ -97,7 +97,7 @@ public class FormationsController {
 
     @GetMapping("/suivi")
     public ModelAndView s_accueil(HttpSession session){
-        ModelAndView model = new ModelAndView("/formations/suivi");
+        ModelAndView model = new ModelAndView("formations/suivi");
         List<SuiviFormations> listSuivi = suiviFormationsRepo.findAllSuiviByProjet((String)session.getAttribute("projet"));
         model.addObject("listSuivi", listSuivi);
         for (SuiviFormations suivi:listSuivi) {

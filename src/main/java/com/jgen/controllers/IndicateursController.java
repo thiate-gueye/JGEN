@@ -33,7 +33,7 @@ public class IndicateursController {
 
     @GetMapping("/planification")
     public ModelAndView accueil(HttpSession session){
-        ModelAndView model = new ModelAndView("/indicateurs/planification");
+        ModelAndView model = new ModelAndView("indicateurs/planification");
         List<PlanificationIndicateurs> listIndicateurs = indicateursRepo.findAllByProjet((String)session.getAttribute("projet"));
         for (PlanificationIndicateurs planif:listIndicateurs) {
             if(planif.getOwner() == Integer.parseInt((String)session.getAttribute("owner")))
@@ -87,7 +87,7 @@ public class IndicateursController {
 
     @GetMapping("/suivi")
     public ModelAndView s_accueil(HttpSession session){
-        ModelAndView model = new ModelAndView("/indicateurs/suivi");
+        ModelAndView model = new ModelAndView("indicateurs/suivi");
         List<SuiviIndicateurs> listSuivi = suiviIndicateursRepo.findAllSuiviByProjet((String)session.getAttribute(("projet")));
         for (SuiviIndicateurs suivi:listSuivi) {
             if(suivi.getPlanification().getOwner() == Integer.parseInt((String)session.getAttribute("owner")))

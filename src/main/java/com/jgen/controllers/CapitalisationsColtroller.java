@@ -26,7 +26,7 @@ public class CapitalisationsColtroller {
 
     @GetMapping("/")
     public ModelAndView accueil(HttpSession session){
-        ModelAndView model = new ModelAndView("/capitalisations/capitalisation");
+        ModelAndView model = new ModelAndView("capitalisations/capitalisation");
         Capitalisations capitalisation = new Capitalisations();
         List<Capitalisations> listCapitalisations = capitalisationsRepo.findAllByProjet((String)session.getAttribute("projet"));
         model.addObject("new_capitalisation", capitalisation);
